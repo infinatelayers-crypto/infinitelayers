@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { formatInr } from "@/lib/format";
 import type { Product } from "@/lib/types";
-import { ProductVisual } from "./product-visual";
+import { ProductCardMedia } from "./product-card-media";
 import { QuickAddButton } from "./quick-add-button";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -11,10 +11,7 @@ export function ProductCard({ product }: { product: Product }) {
         href={`/product/${product.slug}`}
         className="relative block aspect-[4/5] overflow-hidden"
       >
-        <ProductVisual
-          product={product}
-          className="transition duration-700 group-hover:scale-105"
-        />
+        <ProductCardMedia product={product} />
         {!product.inStock ? (
           <span className="absolute left-3 top-3 rounded-full bg-fg/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-bg backdrop-blur">
             Sold out

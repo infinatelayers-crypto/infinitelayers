@@ -1,100 +1,97 @@
 # Infinite Layers
 
-A mobile-first storefront and private control room for a small 3D-printing brand. Built with Next.js 16, Supabase, and Tailwind CSS.
+A mobile-first e-commerce store and private admin control room for a small
+3D-printing brand. Built with Next.js 16, Supabase, and Tailwind CSS.
 
-## What is included
+## Features
 
-### Storefront
-- Public home, shop, search, product, cart, checkout, and confirmation pages
-- No customer account required
-- Up to six photos and full specifications per product
-- Phone number and delivery address requested only at checkout
-- Server-validated bookings with authoritative product prices
+**Storefront**
+- Shop-first home, product search, product pages with photo galleries
+- Cart + checkout with a full price breakup (subtotal, delivery, discount)
+- Coupon codes, delivery charges, and free-delivery threshold
+- Track order (by order number or phone), reviews, and a help/support page
+- Light / dark theme toggle, no customer login required
 
-### Admin (`/admin`)
-- Private Supabase email/password login with an explicit admin allowlist
-- Product create, edit, delete, stock, featured state, price, description, and specifications
-- Direct uploads to the admin-protected `product-images` bucket (six photos, 8 MB each)
-- Booking contact/address/item view and fulfilment statuses
-- Overview metrics, booking pipeline, booked value, and seven-day activity
+**Admin (`/admin`)**
+- Private Supabase email/password login (allowlist + rate limiting)
+- Products (with up to 6 photos), bookings/orders with statuses
+- Coupons, reviews moderation, support inbox
+- Editable site settings: hero text, Instagram, WhatsApp, email, delivery,
+  and Formspree links — no code needed
 
-## Local setup
+**Payments**
+- Razorpay checkout + server-side signature verification + webhook backstop
+- Stays dormant until keys are added (checkout saves the order and the shop
+  confirms payment manually)
+
+## Local development
 
 ```powershell
 npm install
-Copy-Item .env.example .env.local
+Copy-Item .env.example .env.local   # then fill in the values
 npm run dev
 ```
 
-Set the public project URL and anon/publishable key in `.env.local`. The Supabase URL must look like `https://PROJECT_REF.supabase.co`—do not append `/rest/v1`.
-
-Open `http://localhost:3000` for the store or `http://localhost:3000/admin/login` for admin.
+Open `http://localhost:3000` (store) or `http://localhost:3000/admin/login`.
 
 ## One-time Supabase setup
 
-The remote project must be initialized before products, bookings, login, or image uploads can work.
-
-1. In Supabase, open **SQL Editor**.
-2. Run the complete contents of [`supabase/migrations/202609210001_admin_dashboard.sql`](supabase/migrations/202609210001_admin_dashboard.sql).
-3. Open **Authentication → Users** and create the private email/password user for the store owner.
-4. In SQL Editor, approve only that user (replace the example email):
-
-```sql
-insert into public.admin_users (user_id)
-select id from auth.users where email = 'friend@example.com'
-on conflict (user_id) do nothing;
-```
-
-5. Sign in at `/admin/login` and create the first real product.
-
-The migration creates the product/order tables, constrained booking RPC, admin authorization, Row Level Security policies, update triggers, and public-read/admin-write image bucket. There is no public admin sign-up.
+1. Create a project at supabase.com.
+2. SQL Editor → run the entire `supabase/schema.sql` (creates all tables,
+   security policies, storage bucket, and functions; safe to re-run).
+3. Authentication → Users → create the admin email/password user
+   (turn on "Auto Confirm User").
+4. SQL Editor → approve that user (replace the email):
+   ```sql
+   insert into public.admin_users (user_id)
+   select id from auth.users where email = 'admin@example.com'
+   on conflict (user_id) do nothing;
+   ```
+5. Sign in at `/admin/login` and add products.
 
 ## Environment variables
 
-```dotenv
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-or-publishable-key
+Set these in `.env.local` (local) and in Vercel → Settings → Environment
+Variables (production). Only the first two are required to run.
 
-# Reserved for narrowly scoped server work; never expose in browser code.
-SUPABASE_SERVICE_ROLE_KEY=
+| Variable | Required | Notes |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | yes | Supabase → Settings → API (public) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | yes | anon/publishable key (public, safe to expose) |
+| `NEXT_PUBLIC_SITE_URL` | yes | your deployed URL |
+| `ENABLE_DEMO_CATALOG` | no | keep `false` in production |
+| `SUPABASE_SERVICE_ROLE_KEY` | payments | secret — needed only for the Razorpay webhook |
+| `RAZORPAY_KEY_ID` | payments | leave blank to keep payments dormant |
+| `RAZORPAY_KEY_SECRET` | payments | secret |
+| `RAZORPAY_WEBHOOK_SECRET` | payments | secret — must match the Razorpay webhook |
 
-RAZORPAY_KEY_ID=
-RAZORPAY_KEY_SECRET=
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-```
+Keep every "secret" value out of `NEXT_PUBLIC_*` and out of git.
 
-`.env.local` is ignored by Git. Keep server-only keys out of `NEXT_PUBLIC_*` variables and out of `.env.example`.
+## Deploy on Vercel
 
-## Payments (Razorpay)
+1. Import the repo. Framework auto-detects Next.js (enforced by `vercel.json`).
+2. Add the environment variables above (at least the two required ones).
+3. Deploy. After the first deploy, set `NEXT_PUBLIC_SITE_URL` to the real
+   domain and redeploy.
 
-Payment is fully wired and stays **dormant** until keys are present. With
-`RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` empty, checkout saves the order and
-tells the customer the shop will confirm payment. Add keys and restart to go live.
+## Enabling Razorpay (when the store owner has an account)
 
-Flow:
-1. Server creates a Razorpay order (`/api/checkout`) and records its id on the order.
-2. The browser opens the Razorpay popup.
-3. On success, `/api/checkout/verify` checks the signature and marks the order **paid**.
-4. A **webhook** (`/api/webhooks/razorpay`) is the backstop: if the customer closes
-   the tab after paying, Razorpay still notifies the server, which reconciles the
-   order. The webhook needs `SUPABASE_SERVICE_ROLE_KEY` and `RAZORPAY_WEBHOOK_SECRET`.
+Payments are fully built and dormant until keys exist. To turn them on:
 
-### Get test keys (free, no KYC)
-1. [dashboard.razorpay.com](https://dashboard.razorpay.com) → toggle **Test Mode**.
-2. **Settings → API Keys → Generate Test Key** → copy `Key ID` (`rzp_test_...`) and secret.
-3. Put them in `.env.local` (`RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`) and restart.
-4. Test card: `4111 1111 1111 1111`, any future expiry/CVV — or UPI `success@razorpay`.
+1. **Razorpay dashboard** → API Keys → copy `Key ID` and `Key Secret`
+   (use Test mode first — no KYC needed to test).
+2. **Vercel → Environment Variables** → add:
+   - `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`
+   - `RAZORPAY_WEBHOOK_SECRET` (any strong value you choose)
+   - `SUPABASE_SERVICE_ROLE_KEY` (Supabase → Settings → API → service_role)
+   Then redeploy.
+3. **Razorpay dashboard → Settings → Webhooks → Add**:
+   - URL: `https://YOUR_DOMAIN/api/webhooks/razorpay`
+   - Secret: the same value as `RAZORPAY_WEBHOOK_SECRET`
+   - Events: `payment.captured`, `payment.failed`
 
-### Set up the webhook
-1. Deploy (or expose localhost via a tunnel like `ngrok`).
-2. Razorpay → **Settings → Webhooks → Add** → URL `https://YOUR_DOMAIN/api/webhooks/razorpay`.
-3. Set a **secret**; put the same value in `RAZORPAY_WEBHOOK_SECRET`.
-4. Subscribe to events: `payment.captured`, `payment.failed` (optionally `order.paid`).
-5. Add `SUPABASE_SERVICE_ROLE_KEY` to the environment so the webhook can update orders.
-
-Run the SQL migrations in order before going live:
-`202609210001_admin_dashboard.sql`, `202609220001_order_numbers_payments.sql`,
-`202609230001_razorpay_webhook.sql` (all folded into `schema.sql` for fresh installs).
+Test card in Test mode: `4111 1111 1111 1111`, any future expiry/CVV,
+or UPI `success@razorpay`.
 
 ## Validation
 
