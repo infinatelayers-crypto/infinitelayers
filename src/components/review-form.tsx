@@ -70,7 +70,7 @@ export function ReviewForm() {
             minLength={2}
             maxLength={60}
             className="h-11 w-full rounded-xl border border-border bg-bg px-3 text-fg outline-none transition placeholder:text-fg-subtle focus:border-accent/50 focus:ring-4 focus:ring-ring"
-            placeholder="e.g. Asha Kumar"
+            placeholder="Enter your name"
           />
         </label>
 
@@ -112,7 +112,7 @@ export function ReviewForm() {
             maxLength={800}
             rows={4}
             className="w-full resize-y rounded-xl border border-border bg-bg px-3 py-2.5 text-fg outline-none transition placeholder:text-fg-subtle focus:border-accent/50 focus:ring-4 focus:ring-ring"
-            placeholder="Tell others about the quality, finish, delivery…"
+            placeholder="Write your review"
           />
         </label>
 

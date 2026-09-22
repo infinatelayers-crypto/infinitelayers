@@ -67,7 +67,7 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
               name="email"
               type="email"
               className="w-full rounded-xl border border-border bg-surface-2 px-4 py-3 text-fg outline-none transition placeholder:text-fg-subtle focus:border-accent/60 focus:ring-4 focus:ring-ring"
-              placeholder="owner@example.com"
+              placeholder="Enter your admin email"
             />
           </label>
           <label className="block">
@@ -81,7 +81,7 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
               name="password"
               type="password"
               className="w-full rounded-xl border border-border bg-surface-2 px-4 py-3 text-fg outline-none transition placeholder:text-fg-subtle focus:border-accent/60 focus:ring-4 focus:ring-ring"
-              placeholder="Your private password"
+              placeholder="Enter your password"
             />
           </label>
           <button className="w-full rounded-xl bg-accent px-5 py-3.5 text-sm font-bold text-accent-fg transition hover:bg-accent-hover">

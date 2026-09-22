@@ -195,7 +195,7 @@ export function TrackOrder({ initialOrderNo = "" }: { initialOrderNo?: string })
             <input
               value={orderNo}
               onChange={(e) => setOrderNo(e.target.value.toUpperCase())}
-              placeholder="IL-260925-1042"
+              placeholder="Enter your order number"
               className="h-11 w-full rounded-xl border border-border bg-bg px-3 text-fg outline-none transition placeholder:text-fg-subtle focus:border-accent/50 focus:ring-4 focus:ring-ring"
             />
           </label>
@@ -207,7 +207,7 @@ export function TrackOrder({ initialOrderNo = "" }: { initialOrderNo?: string })
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               inputMode="numeric"
-              placeholder="10-digit number"
+              placeholder="Enter your 10-digit phone"
               className="h-11 w-full rounded-xl border border-border bg-bg px-3 text-fg outline-none transition placeholder:text-fg-subtle focus:border-accent/50 focus:ring-4 focus:ring-ring"
             />
           </label>

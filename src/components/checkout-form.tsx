@@ -268,7 +268,7 @@ export function CheckoutForm({ settings }: { settings: StoreSettings }) {
             type="tel"
             inputMode="numeric"
             autoComplete="tel"
-            placeholder="10-digit WhatsApp number"
+            placeholder="Enter your 10-digit mobile number"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-fg outline-none transition placeholder:text-fg-subtle focus:border-accent/50 focus:ring-4 focus:ring-ring"
@@ -281,7 +281,7 @@ export function CheckoutForm({ settings }: { settings: StoreSettings }) {
           <textarea
             rows={4}
             autoComplete="off"
-            placeholder="e.g. Asha Kumar, 12 MG Road, Bengaluru, Karnataka 560001"
+            placeholder="Enter your full delivery address with name, city and PIN code"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             className="w-full resize-y rounded-xl border border-border bg-surface px-4 py-3 text-fg outline-none transition placeholder:text-fg-subtle focus:border-accent/50 focus:ring-4 focus:ring-ring"
@@ -352,7 +352,7 @@ export function CheckoutForm({ settings }: { settings: StoreSettings }) {
                     type="text"
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                    placeholder="Coupon code"
+                    placeholder="Enter coupon code"
                     className="h-11 w-full rounded-xl border border-border bg-bg pl-9 pr-3 text-sm uppercase text-fg outline-none transition placeholder:text-fg-subtle placeholder:normal-case focus:border-accent/50"
                   />
                 </div>

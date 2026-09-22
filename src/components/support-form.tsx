@@ -65,7 +65,7 @@ export function SupportForm() {
             minLength={2}
             maxLength={80}
             className="h-11 w-full rounded-xl border border-border bg-bg px-3 text-fg outline-none transition placeholder:text-fg-subtle focus:border-accent/50 focus:ring-4 focus:ring-ring"
-            placeholder="e.g. Asha Kumar"
+            placeholder="Enter your name"
           />
         </label>
         <label className="block">
@@ -79,7 +79,7 @@ export function SupportForm() {
             minLength={5}
             maxLength={120}
             className="h-11 w-full rounded-xl border border-border bg-bg px-3 text-fg outline-none transition placeholder:text-fg-subtle focus:border-accent/50 focus:ring-4 focus:ring-ring"
-            placeholder="So we can reply"
+            placeholder="Enter your phone or email"
           />
         </label>
         <label className="block">
@@ -94,7 +94,7 @@ export function SupportForm() {
             maxLength={1500}
             rows={5}
             className="w-full resize-y rounded-xl border border-border bg-bg px-3 py-2.5 text-fg outline-none transition placeholder:text-fg-subtle focus:border-accent/50 focus:ring-4 focus:ring-ring"
-            placeholder="How can we help?"
+            placeholder="Enter your message"
           />
         </label>
 
