@@ -1,0 +1,88 @@
+import type { Product } from "./types";
+
+export const demoProducts: Product[] = [
+  {
+    id: "1",
+    slug: "desk-heroes-mini-helmet",
+    name: "Desk Heroes Mini Helmet",
+    description:
+      "Compact collectible helmet for your desk. Precision 3D printed, smooth finish, perfect for display or gifting.",
+    details: "Material: PLA+\nScale: Mini display size\nFinish: Hand-smoothed",
+    pricePaise: 249900,
+    imageUrl: null,
+    imageUrls: [],
+    category: "Collectibles",
+    featured: true,
+    inStock: true,
+  },
+  {
+    id: "2",
+    slug: "painted-captainpool-helmet",
+    name: "Painted CaptainPool Cosplay Helmet",
+    description:
+      "Hand-finished painted cosplay helmet mash-up. Layer-by-layer print quality built for conventions and collectors.",
+    details: "Material: PLA+\nFinish: Primed and hand-painted\nSizing: Wearable adult display piece",
+    pricePaise: 899900,
+    imageUrl: null,
+    imageUrls: [],
+    category: "Cosplay",
+    featured: true,
+    inStock: true,
+  },
+  {
+    id: "3",
+    slug: "raw-deadpool-xforce-helmet",
+    name: "Raw Deadpool X-Force Helmet",
+    description:
+      "Unpainted raw print — ideal if you want to customize yourself. Strong walls, clean supports removed.",
+    details: "Material: PLA+\nFinish: Raw print\nIncludes: Cleaned print ready for sanding",
+    pricePaise: 449900,
+    imageUrl: null,
+    imageUrls: [],
+    category: "Cosplay",
+    featured: false,
+    inStock: true,
+  },
+  {
+    id: "4",
+    slug: "painted-pikapool-helmet",
+    name: "Painted Pikapool Cosplay Helmet",
+    description:
+      "Bold painted finish on a premium PLA+ build. Lightweight, wearable sizing — message on Instagram for fit.",
+    details: "Material: Premium PLA+\nFinish: Hand-painted\nSizing: Confirm fit after placing order",
+    pricePaise: 1249900,
+    imageUrl: null,
+    imageUrls: [],
+    category: "Cosplay",
+    featured: true,
+    inStock: true,
+  },
+  {
+    id: "5",
+    slug: "custom-lithophane-lamp",
+    name: "Custom Lithophane Photo Lamp",
+    description:
+      "Your photo or artwork turned into a warm LED lamp. Custom 3D printed — share your image after order.",
+    details: "Made to order\nWarm LED light included\nPhoto collected after booking",
+    pricePaise: 189900,
+    imageUrl: null,
+    imageUrls: [],
+    category: "Custom",
+    featured: true,
+    inStock: true,
+  },
+  {
+    id: "6",
+    slug: "custom-figurine-print",
+    name: "Custom Figurine Print",
+    description:
+      "Send your STL or reference — we print in high detail. Price varies by size; this is a starting estimate.",
+    details: "Made to order\nFinal quote depends on size and material\nSTL or reference collected after booking",
+    pricePaise: 99900,
+    imageUrl: null,
+    imageUrls: [],
+    category: "Custom",
+    featured: false,
+    inStock: true,
+  },
+];
