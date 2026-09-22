@@ -11,6 +11,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   configuration: "Supabase is not configured for this deployment.",
   credentials: "Email or password is incorrect.",
   unauthorized: "This account is not approved as a store administrator.",
+  throttled:
+    "Too many failed attempts. Please wait 15 minutes and try again.",
 };
 
 export default async function AdminLoginPage({ searchParams }: LoginPageProps) {

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
@@ -66,7 +67,29 @@ export async function loginAction(formData: FormData) {
   const supabase = await createServerSupabase();
 
   if (!supabase) redirect("/admin/login?error=configuration");
+
+  // Rate-limit key: client IP (from proxy headers) + email, so brute force
+  // against one account from one source is throttled. State lives in the DB,
+  // which is serverless-safe (in-memory counters reset on Vercel).
+  const headerList = await headers();
+  const ip =
+    headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    headerList.get("x-real-ip") ||
+    "unknown";
+  const attemptKey = `${ip}:${email || "none"}`;
+
+  const { data: allowed } = await supabase.rpc("login_allowed", {
+    p_key: attemptKey,
+  });
+  if (allowed === false) {
+    redirect("/admin/login?error=throttled");
+  }
+
   if (!email || password.length < 6) {
+    await supabase.rpc("record_login_attempt", {
+      p_key: attemptKey,
+      p_succeeded: false,
+    });
     redirect("/admin/login?error=credentials");
   }
 
@@ -76,11 +99,9 @@ export async function loginAction(formData: FormData) {
   });
 
   if (error || !data.user) {
-    console.error("Admin sign-in failed:", {
-      email,
-      passwordLength: password.length,
-      supabaseError: error?.message,
-      status: error?.status,
+    await supabase.rpc("record_login_attempt", {
+      p_key: attemptKey,
+      p_succeeded: false,
     });
     redirect("/admin/login?error=credentials");
   }
@@ -93,9 +114,17 @@ export async function loginAction(formData: FormData) {
 
   if (membershipError || !membership) {
     await supabase.auth.signOut();
+    await supabase.rpc("record_login_attempt", {
+      p_key: attemptKey,
+      p_succeeded: false,
+    });
     redirect("/admin/login?error=unauthorized");
   }
 
+  await supabase.rpc("record_login_attempt", {
+    p_key: attemptKey,
+    p_succeeded: true,
+  });
   revalidatePath("/admin", "layout");
   redirect("/admin");
 }
