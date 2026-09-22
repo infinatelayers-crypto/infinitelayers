@@ -157,8 +157,8 @@ export default async function HomePage() {
 
       {/* Testimonials */}
       {reviews.length ? (
-        <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <div className="text-center">
+        <section className="overflow-hidden py-16">
+          <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
               Loved by customers
             </p>
@@ -166,23 +166,30 @@ export default async function HomePage() {
               What people say
             </h2>
           </div>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {reviews.map((review, index) => (
-              <Reveal
-                key={review.id}
-                delay={(index % 3) * 80}
-                className="flex h-full flex-col rounded-2xl border border-border bg-surface p-6 shadow-card"
-              >
-                <Stars rating={review.rating} />
-                <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-fg-muted">
-                  “{review.message}”
-                </blockquote>
-                <figcaption className="mt-4 font-display text-sm font-semibold text-fg">
-                  {review.name}
-                </figcaption>
-              </Reveal>
-            ))}
+
+          <div className="marquee relative mt-10">
+            {/* Soft edge fades */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-bg to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-bg to-transparent" />
+
+            <div className="marquee-track gap-5">
+              {[...reviews, ...reviews].map((review, index) => (
+                <figure
+                  key={`${review.id}-${index}`}
+                  className="flex w-80 shrink-0 flex-col rounded-2xl border border-border bg-surface p-6 shadow-card"
+                >
+                  <Stars rating={review.rating} />
+                  <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-fg-muted">
+                    “{review.message}”
+                  </blockquote>
+                  <figcaption className="mt-4 font-display text-sm font-semibold text-fg">
+                    {review.name}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
+
           <div className="mt-8 text-center">
             <a
               href="/help#review"

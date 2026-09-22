@@ -176,6 +176,36 @@ body {
   animation: spin-slow 26s linear infinite;
 }
 
+/* Continuous horizontal marquee for testimonials. The track holds two copies
+   of the content, so translating by -50% loops seamlessly. */
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee {
+  overflow: hidden;
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-x 40s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+  .marquee {
+    overflow-x: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;

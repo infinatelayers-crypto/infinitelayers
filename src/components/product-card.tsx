@@ -7,21 +7,18 @@ import { QuickAddButton } from "./quick-add-button";
 export function ProductCard({ product }: { product: Product }) {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-card transition duration-300 hover:-translate-y-1.5 hover:border-accent/40 hover:shadow-card-lg">
-      <Link
-        href={`/product/${product.slug}`}
-        className="relative block aspect-[4/5] overflow-hidden"
-      >
+      <div className="relative">
         <ProductCardMedia product={product} />
         {!product.inStock ? (
-          <span className="absolute left-3 top-3 rounded-full bg-fg/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-bg backdrop-blur">
+          <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-fg/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-bg backdrop-blur">
             Sold out
           </span>
         ) : product.featured ? (
-          <span className="absolute left-3 top-3 rounded-full bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-accent-fg">
+          <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-accent-fg">
             Featured
           </span>
         ) : null}
-      </Link>
+      </div>
 
       <div className="flex flex-1 flex-col gap-1.5 p-4">
         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">

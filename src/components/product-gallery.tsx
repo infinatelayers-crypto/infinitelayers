@@ -2,7 +2,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Images } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Product } from "@/lib/types";
 import { ProductVisual } from "./product-visual";
 
@@ -13,6 +13,7 @@ type GalleryProduct = Pick<
 
 export function ProductGallery({ product }: { product: GalleryProduct }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const touchStartXRef = useRef<number | null>(null);
   const images = product.imageUrls;
 
   if (!images.length) {
@@ -31,13 +32,36 @@ export function ProductGallery({ product }: { product: GalleryProduct }) {
     );
   }
 
+  function onTouchStart(event: React.TouchEvent) {
+    touchStartXRef.current = event.touches[0]?.clientX ?? null;
+  }
+
+  function onTouchEnd(event: React.TouchEvent) {
+    if (touchStartXRef.current === null || images.length < 2) return;
+    const endX = event.changedTouches[0]?.clientX ?? touchStartXRef.current;
+    const delta = endX - touchStartXRef.current;
+    if (Math.abs(delta) > 40) move(delta < 0 ? 1 : -1);
+    touchStartXRef.current = null;
+  }
+
+  function onTouchMove(event: React.TouchEvent) {
+    // Prevent the page from horizontally panning while swiping the gallery.
+    if (touchStartXRef.current === null || images.length < 2) return;
+    const dx = (event.touches[0]?.clientX ?? touchStartXRef.current) - touchStartXRef.current;
+    if (Math.abs(dx) > 10) event.preventDefault();
+  }
+
   return (
     <div className="space-y-3">
       <div className="group relative aspect-[4/5] overflow-hidden rounded-3xl border border-border bg-surface-2">
         <img
           src={selectedImage}
           alt={`${product.name} — view ${selectedIndex + 1}`}
-          className="h-full w-full object-cover"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          draggable={false}
+          className="h-full w-full touch-pan-y select-none object-cover"
         />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/55 to-transparent" />
         <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur">

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
-import { Check, Tag, X } from "lucide-react";
+import { Check, Minus, Plus, Tag, Trash2, X } from "lucide-react";
 import { useCart } from "@/context/cart-context";
 import { formatInr, normalizePhone } from "@/lib/format";
 import type { StoreSettings } from "@/lib/types";
@@ -50,7 +50,8 @@ function loadRazorpayScript(): Promise<boolean> {
 
 export function CheckoutForm({ settings }: { settings: StoreSettings }) {
   const router = useRouter();
-  const { items, subtotalPaise, clearCart } = useCart();
+  const { items, subtotalPaise, clearCart, setQuantity, removeItem } =
+    useCart();
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
@@ -313,14 +314,57 @@ export function CheckoutForm({ settings }: { settings: StoreSettings }) {
         <h3 className="font-display text-lg font-semibold text-fg">
           Order summary
         </h3>
-        <ul className="mt-4 space-y-3">
+        <ul className="mt-4 space-y-4">
           {items.map((item) => (
-            <li key={item.productId} className="flex justify-between gap-3 text-sm">
-              <span className="text-fg-muted">
-                {item.name}{" "}
-                <span className="text-fg-subtle">× {item.quantity}</span>
-              </span>
-              <span className="shrink-0 font-medium text-fg">
+            <li key={item.productId} className="flex items-start gap-3 text-sm">
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium text-fg">{item.name}</p>
+                <p className="mt-0.5 text-xs text-fg-subtle">
+                  {formatInr(item.pricePaise)} each
+                </p>
+                <div className="mt-2 flex items-center gap-2">
+                  <div className="inline-flex items-center rounded-lg border border-border">
+                    <button
+                      type="button"
+                      aria-label="Decrease quantity"
+                      onClick={() => {
+                        setQuantity(item.productId, item.quantity - 1);
+                        setCoupon(null);
+                      }}
+                      className="flex h-7 w-7 items-center justify-center rounded-l-lg text-fg-muted transition hover:bg-surface-hover hover:text-fg"
+                    >
+                      <Minus size={13} />
+                    </button>
+                    <span className="min-w-8 text-center text-sm font-semibold text-fg">
+                      {item.quantity}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label="Increase quantity"
+                      disabled={item.quantity >= 10}
+                      onClick={() => {
+                        setQuantity(item.productId, item.quantity + 1);
+                        setCoupon(null);
+                      }}
+                      className="flex h-7 w-7 items-center justify-center rounded-r-lg text-fg-muted transition hover:bg-surface-hover hover:text-fg disabled:opacity-40"
+                    >
+                      <Plus size={13} />
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    aria-label={`Remove ${item.name}`}
+                    onClick={() => {
+                      removeItem(item.productId);
+                      setCoupon(null);
+                    }}
+                    className="flex h-7 w-7 items-center justify-center rounded-lg text-fg-subtle transition hover:bg-red-500/10 hover:text-red-500"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+              <span className="shrink-0 font-semibold text-fg">
                 {formatInr(item.pricePaise * item.quantity)}
               </span>
             </li>
